@@ -29,7 +29,7 @@ public class Gui extends JFrame implements SetUp {
         setTitle("Test game");
         setLayout(new CardLayout());
         setSize(WIDTH_FRAME, HEIGHT_FRAME);
-        setResizable(false);// Co dan frame
+        setResizable(true);// Co dan frame
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }

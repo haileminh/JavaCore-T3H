@@ -4,15 +4,25 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Vector;
 
 public class GameScreenPanel extends BasePanel {
 
-    public static final int A = Gui.WIDTH_FRAME / 19;
+    public static final int A = 35;
 
-    public static final int B = Gui.HEIGHT_FRAME / 19;
+    public static final int B = 25;
 
-    static  int arrBg[][];
+    static int arrBg[][];
+
+    static int padding = 10;
+
+    static int WIDTH = 700;
+
+    static int HEIGHT = 500;
+
+    static boolean isPlaying = false;
+    static boolean isGameOver = false;
+
+    static boolean enableTextStartGame = true;
 
     private ConRan conRan;
 
@@ -20,7 +30,6 @@ public class GameScreenPanel extends BasePanel {
 
     Thread thread;
 
-    
     public int[][] getArrBg() {
         return arrBg;
     }
@@ -31,17 +40,33 @@ public class GameScreenPanel extends BasePanel {
 
     public GameScreenPanel() {
         conRan = new ConRan();
+        Data.loadImage();
+        Data.loadAllAnim();
 
         arrBg = new int[A][B];
-        arrBg[5][9] = 1;
-        arrBg[8][9] = 2;
+
+        arrBg[10][10] = 2; // kT con ran
+
         thread = new Thread(this);
         thread.start();
     }
-    
+
     public void run() {
+        long t = 0;
+        long t2 = 0;
         while (true) {
-            conRan.updateConRan();
+            if (System.currentTimeMillis() - t2 > 500) {
+                enableTextStartGame =! enableTextStartGame;
+                t2 = System.currentTimeMillis();
+            }
+            if (isPlaying) {
+                if (System.currentTimeMillis() - t > 200) {
+                    Data.worm.update();
+                    t = System.currentTimeMillis();
+                }
+                conRan.updateConRan();
+            }
+
             repaint();
             try {
                 Thread.sleep(50);
@@ -60,24 +85,40 @@ public class GameScreenPanel extends BasePanel {
         // g.drawString("Hello", 50, a);
         paintBg(g);
         conRan.paintConRan(g);
+        paintKhung(g);
 
+        if (!isPlaying) {
+            if (enableTextStartGame) {
+                g.setColor(Color.BLACK);
+                g.setFont(g.getFont().deriveFont(18.0f));
+                g.drawString("PRESS SPACE TO PLAY GAME...", 250, 250);
+            }
+        }
+        if (isGameOver) {
+            g.setColor(Color.BLACK);
+            g.setFont(g.getFont().deriveFont(28.0f));
+            g.drawString("GAME OVER!!!", 250, 300);
+        }
     }
 
-    public void paintBg(Graphics g) {
+    private void paintKhung(Graphics g) {
+        g.setColor(Color.ORANGE);
+        g.drawRect(0, 0, WIDTH + padding * 2, HEIGHT + padding * 2);
+    }
+
+    private void paintBg(Graphics g) {
         g.setColor(Color.WHITE);
+        g.fillRect(0, 0, WIDTH + padding * 2, HEIGHT + padding * 2);
         for (int i = 0; i < A; i++) {
             for (int j = 0; j < B; j++) {
-//                if (arrBg[i][j] == 0)
-//                    g.setColor(Color.WHITE);
-//                if (arrBg[i][j] == 1)
-//                    g.setColor(Color.BLACK);
-//                if (arrBg[i][j] == 2)
-//                    g.setColor(Color.RED);
-                g.fillRect(i * 20, j * 20, 19, 19);
-                
+
+                // g.fillRect(i * 20, j * 20, 19, 19);
+
                 if (arrBg[i][j] == 2) {
                     g.setColor(Color.RED);
-                    g.fillRect(i * 20, j * 20, 19, 19);
+                    // g.fillRect(i * 20, j * 20, 19, 19);
+                    g.drawImage(Data.worm.getCurrentImage(),
+                            i * 20 - 7 + padding, j * 20 - 7 + padding, null);
                     g.setColor(Color.WHITE);
                 }
             }
@@ -95,6 +136,11 @@ public class GameScreenPanel extends BasePanel {
         keyAdapter = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    isPlaying = !isPlaying;
+                    if(isGameOver == true) isGameOver =! isGameOver;
+                    conRan.resetGame();
+                }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     conRan.setVector(ConRan.GO_UP);
                 }
