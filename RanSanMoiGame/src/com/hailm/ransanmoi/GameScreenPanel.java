@@ -15,13 +15,14 @@ public class GameScreenPanel extends BasePanel {
 
     static int padding = 10;
 
-    static int WIDTH = 700;
+    static int WIDTH = 950;
 
     static int HEIGHT = 500;
 
     static boolean isPlaying = false;
     static boolean isGameOver = false;
-
+    static int currentLevel = 1;
+    static int diem = 0;
     static boolean enableTextStartGame = true;
 
     private ConRan conRan;
@@ -99,11 +100,26 @@ public class GameScreenPanel extends BasePanel {
             g.setFont(g.getFont().deriveFont(28.0f));
             g.drawString("GAME OVER!!!", 250, 300);
         }
+        
+        g.setColor(Color.BLACK);
+        g.setFont(g.getFont().deriveFont(28.0f));
+        g.drawString("LEVEL: "+ currentLevel, 800, 100);
+        
+        g.setFont(g.getFont().deriveFont(20.0f));
+        g.drawString("Diem: "+ diem, 800, 150);
+
+       
     }
 
     private void paintKhung(Graphics g) {
         g.setColor(Color.ORANGE);
         g.drawRect(0, 0, WIDTH + padding * 2, HEIGHT + padding * 2);
+        g.drawRect(1, 1, WIDTH + padding * 2 - 2, HEIGHT + padding * 2 - 2);
+        g.drawRect(2, 2, WIDTH + padding * 2 - 4, HEIGHT + padding * 2 - 4);
+        
+        g.drawRect(0, 0, WIDTH + padding * 2 - 250, HEIGHT + padding * 2);
+        g.drawRect(1, 1, WIDTH + padding * 2 - 2 -250, HEIGHT + padding * 2 - 2);
+        g.drawRect(2, 2, WIDTH + padding * 2 - 4 -250, HEIGHT + padding * 2 - 4);
     }
 
     private void paintBg(Graphics g) {

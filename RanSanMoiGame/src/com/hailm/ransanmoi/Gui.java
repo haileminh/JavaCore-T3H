@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class Gui extends JFrame implements SetUp {
-    public static final int WIDTH_FRAME = 1200;
+    public static final int WIDTH_FRAME = 1000;
 
     public static final int HEIGHT_FRAME = 600;
 

@@ -27,19 +27,20 @@ public class ConRan {
     private long beginTime = 0;
 
     private long beginTime2 = 0;
-    
-    private int speed = 200;
-    
-    private int maxLen = 5;
-    
+
+    private int speed = 100;
+
+    private int maxLen = 10;
+
+    boolean udAfterChangeVt = true;
 
     private int X = GameScreenPanel.A;
 
     private int Y = GameScreenPanel.B;
 
     public ConRan() {
-        x = new int[X];
-        y = new int[Y];
+        x = new int[100];
+        y = new int[100];
 
         x[0] = 9;
         y[0] = 9;
@@ -53,11 +54,13 @@ public class ConRan {
     }
 
     public void setVector(int vector) {
-        if (this.vector != -vector)
+        if (this.vector != -vector && udAfterChangeVt) {
             this.vector = vector;
+            udAfterChangeVt = false;
+        }
     }
 
-    public void resetGame(){
+    public void resetGame() {
         x = new int[X];
         y = new int[Y];
 
@@ -71,7 +74,10 @@ public class ConRan {
         y[2] = 7;
 
         doDai = 3;
+        
+        vector = ConRan.GO_DOWN;
     }
+
     public Point layToaDoMoi() {
         rd = new Random();
         int x;
@@ -94,21 +100,35 @@ public class ConRan {
         return flag;
     }
 
+    public int getCurrentSpeed() {
+        for (int i = 0; i < GameScreenPanel.currentLevel; i++) {
+            speed *= 0.8;
+        }
+        return speed;
+    }
+
     public void updateConRan() {
+
         if (doDai == maxLen) {
             GameScreenPanel.isPlaying = false;
             resetGame();
-            speed = (int) (speed * 0.8);
+            GameScreenPanel.currentLevel++;
+            maxLen +=5;
+            speed = getCurrentSpeed();
         }
-        
+
         for (int i = 1; i < doDai; i++) {
-            if (x[0] == x[i] && y[0]== y[i]) {
+            if (x[0] == x[i] && y[0] == y[i]) {
                 GameScreenPanel.isPlaying = false;
                 GameScreenPanel.isGameOver = true;
+                GameScreenPanel.diem = 0;
+                GameScreenPanel.currentLevel = 1;
             }
         }
-        
+
         if (System.currentTimeMillis() - beginTime2 > 200) {
+            udAfterChangeVt = true;
+
             Data.headGoUp.update();
             Data.headGoDown.update();
             Data.headGoLeft.update();
@@ -123,6 +143,7 @@ public class ConRan {
                 doDai++;
                 GameScreenPanel.arrBg[x[0]][y[0]] = 0;
                 GameScreenPanel.arrBg[layToaDoMoi().x][layToaDoMoi().y] = 2;
+                GameScreenPanel.diem += 10;
             }
 
             for (int i = doDai - 1; i > 0; i--) {
